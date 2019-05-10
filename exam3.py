@@ -22,8 +22,9 @@ def name_id():
 $   Please return your REDID followed by your first and last name as separate elements in a list.
     :return: a list of [redID, first_name, last_name]
     """
-    return ['819800560', 'Lakshmiprabha', 'Sudersanan']
-
+    return ['820992504', 'Mohan', 'Thazhathethil']
+	
+#print(name_id())
 
 def write_no_files_AND_print_no_garbage():
     """
@@ -47,17 +48,19 @@ Section 1 - Generator Functions and Args/Kwargs
 """
 
 
-def inf_gen_1(arg1, arg2):
+def inf_gen_1(str1, str2):
     """
 $   This generator should accept two strings and yield the first string argument 100 times followed by the second 1 time,
      and repeat this pattern INFINITE times.
     EX: ('abc', 'd') -> 'abc', 'abc', ... 98 more times ... 'd', 'abc', 'abc' ...
     """
+    i = 0
     while True:
         for _ in range(100):
-            yield arg1
-        yield arg2
-
+            yield str1
+        yield str2    
+# x = inf_gen_1('abc', 'd')
+# print(x)
 
 def inf_gen_2():
     """
@@ -67,7 +70,9 @@ $   Yield the string "Yes" followed by the string "No"; repeat this pattern INFI
     while True:
         yield 'Yes'
         yield 'No'
-
+		
+#x = inf_gen_2()
+#print(x)
 
 from random import randint
 def inf_gen_3():
@@ -77,24 +82,32 @@ $$  Using randint(0,2) to generate random ints 0, 1, or 2, yield "Yes", "No", or
      the sample size increases to infinity, this generator should approach a 1/3 frequency for each.)
     EX: () -> "Yes", "No", "Yes", "Maybe", "Maybe", "No", ... randomly generating each with 1/3 probability ...
     """
+    start_num = 0
+    end_num =2
     while True:
-        num = randint(0,2)
-        if num == 0:
-            yield "Yes"
-        elif num == 1:
-            yield "No"
-        else:
-            yield "Maybe"
+       random_integer = randint(start_num, end_num)
+       if random_integer == 0:
+           yield "Yes"
+       if random_integer == 1:
+           yield "No"
+       if random_integer == 2:
+          yield "Maybe" 
+            
+# x=inf_gen_3()
+# for i in x:
+#     print(i)
 
-
-def return_generator_object(str):
+def return_generator_object(str1):
     """
 $$  This definition is not a generator, it is a normal def that returns a generator.
     This definition accepts a single string, and returns a generator object (most likely done with generator comp)
     The returned generator should yield each lower case character in the string
     EX: mygen = return_generator_object('HeLlo')  =>  for i in mygen:  ->  'e', 'l', 'o'
     """
-    return (character for character in str if character.islower())
+    return (letter for letter in str1 if letter.islower())
+# mygen = return_generator_object('HeLlo')
+# for i in mygen:
+#     print(i)
 
 def inf_args(*args):
     """
@@ -102,12 +115,13 @@ $   This generator should accept unlimited arguments, and yield them in order. O
      this generator should start over, yielding all arguments again, and repeat this pattern INFINITE times
     EX: (1, 4, 'yes', []) -> 1, 4, 'yes', [], 1, 4, 'yes', [], ...
     """
-    my_list = []
+    return_data = []
     while True:
         for letter in args:
-            my_list.append(letter)
-        yield (my_list)
-
+            return_data.append(letter)
+        yield return_data
+#x = inf_args(1, 4, 'yes', [])
+#print(x)
 
 def stream_splitlines(filename, **kwargs):
     """
@@ -128,34 +142,43 @@ $$  3) if any key-word arguments other than 'raw' or 'tabs' are supplied, this p
     EX: (fruits.csv, raw=True) -> ['fruit,flavor,convenience,durability\n'] ...
     EX: (fruits.csv, thing=0) -> "Extra Kwargs"
     """
-    flag = False
-    val_tabs = kwargs.get('tabs', False)
-    val_raw = kwargs.get('raw', False)
-    my_list = []
-    for key in kwargs:
-        if key == 'tabs' or key == 'raw':
-            flag = True
+
+    check_flag = False
+    for word in kwargs:
+        if word == 'tabs':
+            pass
+        elif word == 'raw':
+            pass
         else:
-            flag = False
+            check_flag = True
             break
-    if not flag and len(kwargs.keys()) > 0:
+
+    key_list = list(kwargs.keys())
+    key_list_check = ['tabs','raw']
+
+
+    # if len(set(key_list).difference(key_list_check)) > 1:
+    #     check_flag = True
+
+    kwargs_tabs = kwargs.get('tabs')
+    kwargs_raw = kwargs.get('raw')
+    count = len(kwargs)
+    if check_flag == True:
         yield "Extra Kwargs"
-    elif val_raw == True:
-        with open(filename) as infile:
-            for line in infile:
-                my_list.append(line.strip()+'\n')
-            yield my_list
-    elif val_tabs == True:
-        with open(filename) as infile:
-            for line in infile:
-                my_list.append(line.strip() +'\t')
-            yield my_list
     else:
+        list_new = []
         with open(filename) as infile:
             for line in infile:
-                my_list.append(line.strip())
-            yield my_list
-# x = stream_splitlines('example.csv', tabsaa=True)
+                line = line.strip()
+                if kwargs_raw == True:
+                    list_new.append(line + '\n')
+                elif kwargs_tabs == True:
+                    list_new.append(line +'\t')
+                else:
+                    list_new.append(line)
+            yield list_new
+                
+# x = stream_splitlines('example.csv')
 # for i in x:
 #     print(i)
 
@@ -173,25 +196,23 @@ $$  3) if the key-word 'div_by' is used (it's value will always be an int),
     EX: (2, 2, 4, float=True) -> [1.0, 1.0, 2.0]    # remember, div_by defaults to 2 if not supplied
     EX: (2, 2, 4, multiply_by=10, div_by=1) -> [20, 20, 40]
     """
-    val_float = kwargs.get('float', False)
-    val_multiply_by = kwargs.get('multiply_by', False)
-    val_div_by = kwargs.get('div_by', False)
-    list = []
-    for i in args:
-        num = i
-        if val_float == True:
-            num = float(num)
-        if val_multiply_by != False:
-            num = num * val_multiply_by
-        if  val_div_by != False:
-            num = num / val_div_by
-        if val_div_by == False:
-            num = num /2
-        list.append(num)
-    return list
 
-# print(process_numbers(2, 2, 4, multiply_by=10, div_by=1))
-# print(2*10/1)
+    kwargs_float = kwargs.get("float")
+    kwargs_multiply_by = kwargs.get("multiply_by")
+    kwargs_div_by = kwargs.get("div_by")
+
+    new_list = args
+    if kwargs_float == True:
+        new_list = [ float(num) for num in new_list]
+
+    if kwargs_multiply_by != None:
+        new_list = [ num * kwargs_multiply_by for num in new_list]
+
+    if kwargs_div_by != None:
+        new_list = [ num / kwargs_div_by for num in new_list]
+    else:
+        new_list = [ num / 2 for num in new_list]
+    return new_list
 
 """
 Definitions as objects, Decorators, and Lambda functions
@@ -199,7 +220,7 @@ Definitions as objects, Decorators, and Lambda functions
 
 
 
-def for_sorting(arg1):
+def for_sorting(str_val):
     """
 $$  When this def is used for sorting a list of strings it should sort them by
      the number of "K", or "C"s present in the string; lowest to highest.
@@ -208,13 +229,11 @@ $$  When this def is used for sorting a list of strings it should sort them by
     This definition will NOT be tested with reverse=True
     EX: sorted(['AAC', 'AAA', 'CKC', 'KK'], key=<this def here>) -> ['AAA', 'AAC', 'KK', 'CKC']
     """
-    count1 = str(arg1).count("C")
-    count2 = str(arg1).count("K")
-    return count1 + count2
+    return str(str_val).count('K') + str(str_val).count('C')
 
-# print(sorted(['AAC', 'AAA', 'CKC', 'KK'], key=for_sorting))
 
-def only_unique_decorator(func):
+
+def only_unique_decorator(my_function):
     """
 $$  When this decorator is applied to a definition, it should force uniqueness
      in the return value of the definition it is applied to.
@@ -222,21 +241,16 @@ $$  When this decorator is applied to a definition, it should force uniqueness
      is a LIST.
     EX: [1, 'yes', 'yes', 1] -> [1, 'yes']
     """
-    def inner_func(*args,**kwargs):
-        return_val = func(*args,**kwargs)
-        if isinstance(return_val, list):
-            return list(set(return_val))
+    def inner(*args,**kwargs):
+        result_data = my_function(*args,**kwargs)
+        if type(result_data) == list:
+            return list(set(result_data))
         else:
-            return return_val
-    return inner_func
+            return result_data
+    return inner
 
-# @only_unique_decorator
-# def return_list(my_list):
-#     return (my_list)
-#
-# print(return_list([1, 'yes', 'yes', 1]))
 
-def definition_maker(num, input_type):
+def definition_maker(num1, data_type):
     """
 $$$ This definition accepts a single int and a type (only float, int, or str),
      and it returns a definition (a lambda function), here I will call that lambda function 'def2'.
@@ -248,15 +262,15 @@ $$$ This definition accepts a single int and a type (only float, int, or str),
         mydef2 = definition_maker(100, str)  =>  mydef2(200)  -> '300'
                                              =>  mydef2(410)  -> '510'
     """
-    def inner_func(n):
-        assert type(n) == int, 'Invalid Argument, Should be Type Int'
-        new_value  = num + n
-        new_value = input_type(new_value)
-        return new_value
-    return inner_func
+    def inner(num2):
+        result_data  = num1 + num2
+        result_data = data_type(result_data)
+        return result_data
+    return inner
 
 
-def backup_with_csv_decorator(func):
+
+def backup_with_csv_decorator(my_function):
     """
 $$ When this decorator is applied to a definition, it should write the
      return value of the definition to a CSV file.
@@ -267,22 +281,19 @@ $$ When this decorator is applied to a definition, it should write the
     EX: [[1, 2, 3], ['a', 'b', 'c']]  ->  1,2,3\n
                                           a,b,c\n  <~ it wont matter if file ends with newline
     """
-
     def inner_func(*args, **kwargs):
-        result = func(*args, **kwargs)
-        if type(result) == list and type(result[0]) == list:
-            with open('backup.csv', 'w') as outfile:
-                for line in result:
+        result_data = my_function(*args, **kwargs)
+        filename = 'backup.csv'
+        if result_data is None:
+            return result_data
+        elif isinstance(result_data, list) and isinstance(result_data[0], list):
+            with open(filename, 'w') as outfile:
+                for line in result_data:
                     outfile.write(','.join([str(x) for x in line]) + '\n')
-            return result
+            return result_data
         else:
-            return result
+            return result_data
     return inner_func
-
-# @backup_with_csv_decorator
-# def test_value(nested_list):
-#     return nested_list
-# test_value([[1, 2, 3], ['a', 'b', 'c']])
 
 
 
